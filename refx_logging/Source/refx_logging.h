@@ -42,7 +42,7 @@ struct LoggingOptions
 {
 	float 		scale = 1.0f;
 	int			rowHeight = 22;
-	juce::Font	font;
+	juce::Font	font = juce::FontOptions ();
 
 	std::function<std::unique_ptr<juce::LookAndFeel>()>	lookAndFeelFactory;
 };
