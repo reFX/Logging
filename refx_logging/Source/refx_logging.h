@@ -37,6 +37,17 @@ enum class LogLevel : int
 	debuglog	= 0,
 };
 
+//-------------------------------------------------------------------------------------------------
+struct LoggingOptions
+{
+	float 		scale = 1.0f;
+	int			rowHeight = 22;
+	juce::Font	font;
+
+	std::function<std::unique_ptr<juce::LookAndFeel>()>	lookAndFeelFactory;
+};
+//-------------------------------------------------------------------------------------------------
+
 class Logging
 	: public juce::AsyncUpdater
 	, public juce::DeletedAtShutdown
@@ -57,7 +68,7 @@ public:
 	static juce::String getLogLevelName ( LogLevel l );
 
 	void closeLoggingWindow ();
-	LoggingWindow& getLoggingWindow ( float scale );
+	LoggingWindow& getLoggingWindow ( const LoggingOptions& );
 	bool isLoggingWindowVisible ();
 
 	static void logMessage ( const juce::String& message, const LogLevel level );

@@ -109,12 +109,10 @@ void Logging::closeLoggingWindow ()
 }
 //-------------------------------------------------------------------------------------------------
 
-LoggingWindow& Logging::getLoggingWindow ( float scale )
+LoggingWindow& Logging::getLoggingWindow ( const LoggingOptions& opts )
 {
 	if ( loggingWindow == nullptr )
-	{
-		loggingWindow = std::make_unique<LoggingWindow> (*this, scale );
-	}
+		loggingWindow = std::make_unique<LoggingWindow> (*this, opts );
 
 	return *loggingWindow;
 }

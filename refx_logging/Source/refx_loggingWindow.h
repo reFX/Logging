@@ -10,7 +10,7 @@ class LoggingWindow
 	: public juce::DocumentWindow
 {
 public:
-	LoggingWindow ( Logging&, float scale );
+	LoggingWindow ( Logging&, const LoggingOptions& );
 	~LoggingWindow () override;
 
 	void update ();
@@ -50,12 +50,11 @@ private:
 	std::unique_ptr<juce::LookAndFeel>	laf;
 	juce::Array<Logging::Message> messages;
 
-	Content				content { *this };
-
 	time_t 				logClearedTime = 0;
-	float				scale = 1.0f;
 	bool				everShown = false;
-	juce::Font			font { 12.0f };
+	LoggingOptions		opts;
+
+	Content				content { *this };
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (LoggingWindow)
 };

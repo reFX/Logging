@@ -13,6 +13,7 @@ LoggingWindow::Content::Content ( LoggingWindow& o )
 	addAndMakeVisible ( dbc );
 	dbc.setModel ( this );
 	dbc.setOpaque ( true );
+	dbc.setRowHeight ( owner.opts.rowHeight );
 	dbc.setOutlineThickness ( 4 );
 	dbc.setColour ( juce::ListBox::backgroundColourId, juce::Colour::fromRGB ( 41, 44, 50 ) );
 	dbc.setColour ( juce::ListBox::outlineColourId, juce::Colours::transparentBlack );
@@ -129,7 +130,7 @@ void LoggingWindow::Content::paintListBoxItem ( int row, juce::Graphics& g, int 
 
 		const auto	text = juce::String ( dstTime ) + " - " + message.description;
 
-		g.setFont ( owner.font );
+		g.setFont ( owner.opts.font );
 
 		if ( message.level != LogLevel::log )
 		{
@@ -150,11 +151,14 @@ void LoggingWindow::Content::paintListBoxItem ( int row, juce::Graphics& g, int 
 //-------------------------------------------------------------------------------------------------
 
 
-LoggingWindow::LoggingWindow ( Logging& l, float scale_ )
+LoggingWindow::LoggingWindow ( Logging& l, const LoggingOptions& opts_ )
 	: juce::DocumentWindow ( "reFX logging window", juce::Colours::coral, TitleBarButtons::closeButton )
 	, logging ( l )
-	, scale ( scale_ )
+	, opts ( opts_ )
 {
+	if ( opts.lookAndFeelFactory )
+		laf = opts.lookAndFeelFactory ();
+
 	setUsingNativeTitleBar ( true );
 	setLookAndFeel ( laf.get () );
 	setContentNonOwned ( &content, false );
@@ -179,18 +183,14 @@ LoggingWindow::LoggingWindow ( Logging& l, float scale_ )
 	tokens.removeEmptyStrings();
 	tokens.trim();
 	if ( tokens[ 0 ] == "fs" )
-	{
 		tokens.remove ( 0 );
-	}
 
 	//
 	// Make sure it has a decent size
 	//
 	juce::Rectangle<int> newPos ( tokens[ 0 ].getIntValue (), tokens[ 1 ].getIntValue (), tokens[ 2 ].getIntValue (), tokens[ 3 ].getIntValue () );
 	if ( newPos.getWidth () < 200 || newPos.getHeight () < 200 )
-	{
 		newPos = { 100, 100, 600, 800 };
-	}
 
 	//
 	// Make sure it's on a display
@@ -198,7 +198,7 @@ LoggingWindow::LoggingWindow ( Logging& l, float scale_ )
 	std::optional<juce::Displays::Display> display;
 	for ( auto d : juce::Desktop::getInstance ().getDisplays ().displays )
 	{
-		auto area = d.userArea.toFloat () / scale;
+		auto area = d.userArea.toFloat () / opts.scale;
 		if ( area.contains ( newPos.toFloat () ) )
 		{
 			display = d;
@@ -211,7 +211,7 @@ LoggingWindow::LoggingWindow ( Logging& l, float scale_ )
 		if ( auto d = juce::Desktop::getInstance ().getDisplays ().getPrimaryDisplay () )
 		{
 			display = *d;
-			auto area = display->userArea.toFloat () / scale;
+			auto area = display->userArea.toFloat () / opts.scale;
 			newPos = juce::Rectangle<int> ( int ( area.getX () ) + 100, int ( area.getY () ) + 100, 600, 800 );
 		}
 	}
@@ -279,7 +279,7 @@ void LoggingWindow::update ()
 
 float LoggingWindow::getDesktopScaleFactor () const
 {
-	return scale * juce::Desktop::getInstance ().getGlobalScaleFactor ();
+	return opts.scale * juce::Desktop::getInstance ().getGlobalScaleFactor ();
 }
 //-------------------------------------------------------------------------------------------------
 
