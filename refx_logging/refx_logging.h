@@ -16,7 +16,7 @@
   license:				none/internal use only
   minimumCppStandard:	11
 
-  dependencies:     juce_core, juce_events, juce_graphics, juce_gui_basics, refx_gui_extras, refx_utilities
+  dependencies:     juce_core, juce_events, juce_graphics, juce_gui_basics
 
  END_JUCE_MODULE_DECLARATION
 
@@ -31,7 +31,6 @@
 #include <juce_events/juce_events.h>
 #include <juce_graphics/juce_graphics.h>
 #include <juce_gui_basics/juce_gui_basics.h>
-#include <refx_gui_extras/refx_gui_extras.h>
 
 //==============================================================================
 

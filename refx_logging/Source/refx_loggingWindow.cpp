@@ -32,7 +32,7 @@ LoggingWindow::Content::Content ( LoggingWindow& o )
 	saveButton.onClick = [ this ]
 	{
 		auto f = juce::File::getSpecialLocation ( juce::File::userDesktopDirectory ).getChildFile ( owner.getName ().replace ( "logging window", "Support Info" ) + ".txt" );
-		gin::overwriteWithText ( f, owner.logging.getAsString () );
+		f.replaceWithText ( owner.logging.getAsString () );
 	};
 
    #if JUCE_DEBUG || REFX_DEVELOPMENT
@@ -129,7 +129,7 @@ void LoggingWindow::Content::paintListBoxItem ( int row, juce::Graphics& g, int 
 
 		const auto	text = juce::String ( dstTime ) + " - " + message.description;
 
-		g.setFont ( getLookAndFeel ().defaultFontWithHeight ( float ( dbc.getRowHeight () ) * 0.8f ) );
+		g.setFont ( owner.font );
 
 		if ( message.level != LogLevel::log )
 		{
@@ -156,7 +156,7 @@ LoggingWindow::LoggingWindow ( Logging& l, float scale_ )
 	, scale ( scale_ )
 {
 	setUsingNativeTitleBar ( true );
-	setLookAndFeel ( &laf );
+	setLookAndFeel ( laf.get () );
 	setContentNonOwned ( &content, false );
 	setResizable ( true, true );
 
@@ -168,10 +168,9 @@ LoggingWindow::LoggingWindow ( Logging& l, float scale_ )
 	juce::String appName = juce::File::getSpecialLocation ( juce::File::currentExecutableFile ).getFileNameWithoutExtension ().replace ( " ", "_" );
 	settingsFile = juce::File::getSpecialLocation ( juce::File::userApplicationDataDirectory ).getChildFile ( settingsSubDir + "/logging_window_" + appName + ".json" );
 
-	JsonFile jsonFile ( settingsFile );
-	jsonFile.load ();
+	auto json = juce::JSON::parse ( settingsFile );
 
-	juce::String pos = jsonFile.get ( "/window_pos", "" );
+	juce::String pos = json.getProperty ( "/window_pos", "" ).toString ();
 
 	//
 	// Get saved window rect
@@ -222,7 +221,7 @@ LoggingWindow::LoggingWindow ( Logging& l, float scale_ )
 	//
 	setBounds ( newPos );
 
-	logging.setLogLevel ( ( LogLevel ) jsonFile.get ( "/log_level", ( int ) LogLevel::debuglog ) );
+	logging.setLogLevel ( ( LogLevel ) ( int ) json.getProperty ( "/log_level", ( int ) LogLevel::debuglog ) );
 
 	update ();
 }
@@ -233,13 +232,17 @@ LoggingWindow::~LoggingWindow ()
 	setLookAndFeel ( nullptr );
 	if ( everShown )
 	{
-		JsonFile jsonFile ( settingsFile );
-		jsonFile.load ();
-		jsonFile.set ( juce::String ( "/window_pos" ), getWindowStateAsString () );
+		auto json = juce::JSON::parse ( settingsFile );
+		auto obj = json.getDynamicObject ();
+
+		if ( obj == nullptr )
+			obj = new juce::DynamicObject ();
+
+		obj->setProperty ( juce::String ( "/window_pos" ), getWindowStateAsString () );
 	   #if JUCE_DEBUG || REFX_DEVELOPMENT
-		jsonFile.set ( "/log_level", ( int ) logging.getLogLevel () );
+		obj->setProperty ( "/log_level", ( int ) logging.getLogLevel () );
 	   #endif
-		jsonFile.save ();
+		settingsFile.replaceWithText ( juce::JSON::toString ( juce::var ( obj ) ) );
 	}
 }
 //-------------------------------------------------------------------------------------------------

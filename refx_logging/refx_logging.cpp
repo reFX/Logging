@@ -12,8 +12,6 @@
  #include <winnt.h>
 #endif
 
-#include <refx_utilities/refx_utilities.h>
-
 #include "refx_logging.h"
 
 #include "Source/refx_logging.cpp"

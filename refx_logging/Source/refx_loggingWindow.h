@@ -47,7 +47,7 @@ private:
 
 	Logging&			logging;
 	juce::File			settingsFile;
-	reFX::LookAndFeel	laf;
+	std::unique_ptr<juce::LookAndFeel>	laf;
 	juce::Array<Logging::Message> messages;
 
 	Content				content { *this };
@@ -55,6 +55,7 @@ private:
 	time_t 				logClearedTime = 0;
 	float				scale = 1.0f;
 	bool				everShown = false;
+	juce::Font			font { 12.0f };
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (LoggingWindow)
 };
