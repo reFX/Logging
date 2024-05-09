@@ -232,12 +232,13 @@ LoggingWindow::LoggingWindow ( Logging& l, const LoggingOptions& opts_ )
 LoggingWindow::~LoggingWindow ()
 {
 	setLookAndFeel ( nullptr );
+
 	if ( everShown )
 	{
 		auto json = juce::JSON::parse ( settingsFile );
 		auto obj = json.getDynamicObject ();
 
-		if ( obj == nullptr )
+		if ( ! obj )
 			obj = new juce::DynamicObject ();
 
 		obj->setProperty ( juce::String ( "/window_pos" ), getWindowStateAsString () );
@@ -267,12 +268,8 @@ void LoggingWindow::update ()
 	messages.clear ();
 
 	for ( auto m : logging.getMessages () )
-	{
 		if ( m.timeStamp >= logClearedTime && m.level >= logging.getLogLevel () )
-		{
 			messages.add ( m );
-		}
-	}
 
 	content.dbc.updateContent ();
 	content.dbc.scrollToEnsureRowIsOnscreen ( messages.size () - 1 );
