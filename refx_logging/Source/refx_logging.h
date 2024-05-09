@@ -24,8 +24,6 @@ namespace reFX
 {
 //-------------------------------------------------------------------------------------------------
 
-bool isCurrentUserAdmin ();
-
 class LoggingWindow;
 
 enum class LogLevel : int
@@ -36,8 +34,8 @@ enum class LogLevel : int
 	log			= 1,
 	debuglog	= 0,
 };
-
 //-------------------------------------------------------------------------------------------------
+
 struct LoggingOptions
 {
 	float 		scale = 1.0f;
@@ -113,7 +111,7 @@ private:
 	std::unique_ptr<juce::FileOutputStream>	logStream;
 	std::unique_ptr<LoggingWindow> 			loggingWindow;
 
-	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Logging)
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR ( Logging )
 };
 //-------------------------------------------------------------------------------------------------
 }

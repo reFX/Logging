@@ -15,12 +15,14 @@ LoggingWindow::Content::Content ( LoggingWindow& o )
 	dbc.setOpaque ( true );
 	dbc.setRowHeight ( owner.opts.rowHeight );
 	dbc.setOutlineThickness ( 4 );
-	dbc.setColour ( juce::ListBox::backgroundColourId, juce::Colour::fromRGB ( 41, 44, 50 ) );
+	dbc.setColour ( juce::ListBox::backgroundColourId, juce::Colour ( 0xff'13161B ) );
 	dbc.setColour ( juce::ListBox::outlineColourId, juce::Colours::transparentBlack );
 
+	const auto	txtCol = juce::Colour ( 0xff'ACBDD5 );
+
 	addAndMakeVisible ( clearButton );
-	clearButton.setColour ( juce::TextButton::textColourOnId, juce::Colours::white );
-	clearButton.setColour ( juce::TextButton::textColourOffId, juce::Colours::white );
+	clearButton.setColour ( juce::TextButton::textColourOnId, txtCol );
+	clearButton.setColour ( juce::TextButton::textColourOffId, txtCol );
 	clearButton.onClick = [ this ]
 	{
 		owner.logClearedTime = std::chrono::system_clock::to_time_t ( std::chrono::system_clock::now () );
@@ -28,8 +30,8 @@ LoggingWindow::Content::Content ( LoggingWindow& o )
 	};
 
 	addAndMakeVisible ( saveButton );
-	saveButton.setColour ( juce::TextButton::textColourOnId, juce::Colours::white );
-	saveButton.setColour ( juce::TextButton::textColourOffId, juce::Colours::white );
+	saveButton.setColour ( juce::TextButton::textColourOnId, txtCol );
+	saveButton.setColour ( juce::TextButton::textColourOffId, txtCol );
 	saveButton.onClick = [ this ]
 	{
 		auto f = juce::File::getSpecialLocation ( juce::File::userDesktopDirectory ).getChildFile ( owner.getName ().replace ( "logging window", "Support Info" ) + ".txt" );
@@ -39,15 +41,15 @@ LoggingWindow::Content::Content ( LoggingWindow& o )
    #if JUCE_DEBUG || REFX_DEVELOPMENT
 	addAndMakeVisible ( levelButton );
 	levelButton.setButtonText ( Logging::getLogLevelName ( owner.logging.getLogLevel () ) );
-	levelButton.setColour ( juce::TextButton::textColourOnId, juce::Colours::white );
-	levelButton.setColour ( juce::TextButton::textColourOffId, juce::Colours::white );
+	levelButton.setColour ( juce::TextButton::textColourOnId, txtCol );
+	levelButton.setColour ( juce::TextButton::textColourOffId, txtCol );
 	levelButton.onClick = [ this ]
 	{
-		juce::PopupMenu m;
+		juce::PopupMenu	m;
 
-		for ( int i = int ( LogLevel::error ); i >= int ( LogLevel::debuglog ); --i)
+		for ( auto i = int ( LogLevel::error ); i >= int ( LogLevel::debuglog ); --i )
 		{
-			auto l = LogLevel ( i );
+			auto	l = LogLevel ( i );
 			m.addItem ( Logging::getLogLevelName ( l ),	true, owner.logging.getLogLevel () == l, [ this, l ]
 			{
 				levelButton.setButtonText ( Logging::getLogLevelName ( l ) );
@@ -67,7 +69,7 @@ void LoggingWindow::Content::resized ()
 {
 	auto bounds = getLocalBounds ();
 
-	auto rc = bounds.removeFromTop ( 30 );
+	auto rc = bounds.removeFromTop ( 40 ).reduced ( 5 );
 
 	clearButton.setBounds ( rc.removeFromLeft ( 60 ).reduced ( 2 ) );
 	saveButton.setBounds ( rc.removeFromRight ( 120 ).reduced ( 2 ) );
@@ -82,8 +84,7 @@ void LoggingWindow::Content::resized ()
 
 void LoggingWindow::Content::paint ( juce::Graphics& g ) 
 {
-	g.setColour ( juce::Colour::fromRGB ( 82, 88, 100 ) );
-	g.fillAll ();
+	g.fillAll ( juce::Colour ( 0xff'13161B ).overlaidWith ( juce::Colours::white.withAlpha ( 0.05f ) ) );
 }
 //-------------------------------------------------------------------------------------------------
 
@@ -117,11 +118,11 @@ void LoggingWindow::Content::paintListBoxItem ( int row, juce::Graphics& g, int 
 		const auto message = owner.messages[ row ];
 
 		static juce::Colour	levels[][ 2 ] = {
-											{	juce::Colour ( 0xFF, 0xCC, 0x33 ), juce::Colours::black,	},	// dlog
-											{	juce::Colours::transparentBlack, juce::Colours::white,		},	// log
-											{   juce::Colours::green, juce::Colours::white					},	// info
-											{   juce::Colours::orange, juce::Colours::black 				},	// warn
-											{	juce::Colour ( 0xFF, 0x00, 0x00 ), juce::Colours::white,	},	// err
+			{	juce::Colour ( 0xff'EBFD5A ),		juce::Colours::black	},	// dlog
+			{	juce::Colours::transparentBlack,	juce::Colours::white	},	// log
+			{   juce::Colour ( 0xFF'43A047 ),		juce::Colours::white	},	// info
+			{   juce::Colour ( 0xff'ECBF54 ),		juce::Colours::black	},	// warn
+			{	juce::Colour ( 0xff'FC5454 ),		juce::Colours::black	},	// err
 		};
 
 		// Compose final message
@@ -132,15 +133,16 @@ void LoggingWindow::Content::paintListBoxItem ( int row, juce::Graphics& g, int 
 
 		g.setFont ( owner.opts.font );
 
-		if ( message.level != LogLevel::log )
+		const auto	msgLevel = int ( message.level );
+		if ( const auto bckCol = levels[ msgLevel ][ 0 ]; ! bckCol.isTransparent () )
 		{
-			const auto	textWidth = g.getCurrentFont ().getStringWidthFloat ( text ) + 4.0f;
+			const auto	textWidth = g.getCurrentFont ().getStringWidthFloat ( text );
 
-			g.setColour ( levels[ ( int ) message.level ][ 0 ] );
-			g.fillRoundedRectangle ( juce::Rectangle<float>{ 2.0f, 0.0f, textWidth, (float)dbc.getRowHeight () }.reduced ( 0.0f, 1.0f ), 2.0f );
+			g.setColour ( bckCol );
+			g.fillRoundedRectangle ( juce::Rectangle<float>{ textWidth + 8.0f, float ( dbc.getRowHeight () ) }.reduced ( 0.0f, 1.5f ), 3.0f );
 		}
 
-		g.setColour ( levels[ ( int ) message.level ][ 1 ] );
+		g.setColour ( levels[ msgLevel ][ 1 ] );
 
 		g.drawText (	text,
 						juce::Rectangle<int> ( width, height ).reduced ( 4, 0 ),
