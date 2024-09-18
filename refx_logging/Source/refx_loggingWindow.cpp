@@ -136,7 +136,7 @@ void LoggingWindow::Content::paintListBoxItem ( int row, juce::Graphics& g, int 
 		const auto	msgLevel = int ( message.level );
 		if ( const auto bckCol = levels[ msgLevel ][ 0 ]; ! bckCol.isTransparent () )
 		{
-			const auto	textWidth = g.getCurrentFont ().getStringWidthFloat ( text );
+			const auto	textWidth = juce::GlyphArrangement::getStringWidth ( g.getCurrentFont (), text );
 
 			g.setColour ( bckCol );
 			g.fillRoundedRectangle ( juce::Rectangle<float>{ textWidth + 8.0f, float ( dbc.getRowHeight () ) }.reduced ( 0.0f, 1.5f ), 3.0f );
