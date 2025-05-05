@@ -14,5 +14,6 @@
 
 #include "refx_logging.h"
 
-#include "Source/refx_logging.cpp"
-#include "Source/refx_loggingWindow.cpp"
+#include "Source/refx_Logging.cpp"
+#include "Source/refx_LoggingWindow.cpp"
+#include "Source/refx_LoggingComponent.cpp"

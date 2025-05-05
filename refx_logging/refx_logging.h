@@ -34,5 +34,6 @@
 
 //==============================================================================
 
-#include "Source/refx_logging.h"
-#include "Source/refx_loggingWindow.h"
+#include "Source/refx_Logging.h"
+#include "Source/refx_LoggingWindow.h"
+#include "Source/refx_LoggingComponent.h"
