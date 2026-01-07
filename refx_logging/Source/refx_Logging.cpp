@@ -171,7 +171,7 @@ juce::String Logging::getSystemStats ()
 	//
 	auto isCurrentUserAdmin = [] () -> bool
 	{
-		#if JUCE_MAC
+		#if JUCE_MAC || JUCE_LINUX
 			juce::ChildProcess cp;
 			cp.start ( { "id", "-u" } );
 			cp.waitForProcessToFinish ( 100 );
