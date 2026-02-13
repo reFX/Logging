@@ -200,7 +200,7 @@ LoggingWindow::LoggingWindow ( Logging& l, const LoggingOptions& opts_ )
 	std::optional<juce::Displays::Display> display;
 	for ( auto d : juce::Desktop::getInstance ().getDisplays ().displays )
 	{
-		auto area = d.userArea.toFloat () / opts.scale;
+		auto area = d.userBounds / opts.scale;
 		if ( area.contains ( newPos.toFloat () ) )
 		{
 			display = d;
@@ -213,7 +213,7 @@ LoggingWindow::LoggingWindow ( Logging& l, const LoggingOptions& opts_ )
 		if ( auto d = juce::Desktop::getInstance ().getDisplays ().getPrimaryDisplay () )
 		{
 			display = *d;
-			auto area = display->userArea.toFloat () / opts.scale;
+			auto area = display->userBounds / opts.scale;
 			newPos = juce::Rectangle<int> ( int ( area.getX () ) + 100, int ( area.getY () ) + 100, 600, 800 );
 		}
 	}
