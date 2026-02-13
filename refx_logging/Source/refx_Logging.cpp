@@ -216,7 +216,7 @@ juce::String Logging::getSystemStats ()
 	//
 	for ( const auto& d : juce::Desktop::getInstance().getDisplays ().displays )
 	{
-		const auto	physRect = ( d.totalArea.toDouble () * d.scale ).toNearestIntEdges ();
+		const auto	physRect = ( d.logicalBounds.toDouble () * d.scale ).toNearestIntEdges ();
 
 		text += juce::String::formatted ( "Display:   %d x %d @ %d%%\r\n", physRect.getWidth (), physRect.getHeight (), juce::roundToInt ( d.scale * 100.0 ) );
 	}
