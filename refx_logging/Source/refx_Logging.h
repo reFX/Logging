@@ -41,7 +41,7 @@ struct LoggingOptions
 	float 		scale = 1.0f;
 	int			rowHeight = 22;
 #if JUCE_MAJOR_VERSION >= 8
-	juce::Font	font = juce::FontOptions ();
+	juce::Font	font = juce::Font ( juce::FontOptions () );
 #else
 	juce::Font	font = {};
 #endif
