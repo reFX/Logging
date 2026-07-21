@@ -200,7 +200,7 @@ LoggingWindow::LoggingWindow ( Logging& l, const LoggingOptions& opts_ )
 	std::optional<juce::Displays::Display> display;
 	for ( auto d : juce::Desktop::getInstance ().getDisplays ().displays )
 	{
-#if JUCE_MAJOR_VERSION >= 8 && JUCE_MINOR_VERSION >= 0 && JUCE_BUILDNUMBER >= 12
+#if JUCE_VERSION >= 0x8000c // 8.0.12
 		auto area = d.userBounds / opts.scale;
 #else
 		auto area = d.userArea.toFloat () / opts.scale;
@@ -217,7 +217,7 @@ LoggingWindow::LoggingWindow ( Logging& l, const LoggingOptions& opts_ )
 		if ( auto d = juce::Desktop::getInstance ().getDisplays ().getPrimaryDisplay () )
 		{
 			display = *d;
-#if JUCE_MAJOR_VERSION >= 8 && JUCE_MINOR_VERSION >= 0 && JUCE_BUILDNUMBER >= 12
+#if JUCE_VERSION >= 0x8000c // 8.0.12
 			auto area = display->userBounds / opts.scale;
 #else
 			auto area = display->userArea / opts.scale;

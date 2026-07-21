@@ -216,7 +216,7 @@ juce::String Logging::getSystemStats ()
 	//
 	for ( const auto& d : juce::Desktop::getInstance().getDisplays ().displays )
 	{
-#if JUCE_MAJOR_VERSION >= 8 && JUCE_MINOR_VERSION >= 0 && JUCE_BUILDNUMBER >= 12
+#if JUCE_VERSION >= 0x8000c // 8.0.12
 		const auto	physRect = ( d.logicalBounds.toDouble () * d.scale ).toNearestIntEdges ();
 #else
 		const auto	physRect = ( d.totalArea.toDouble () * d.scale ).toNearestIntEdges ();
